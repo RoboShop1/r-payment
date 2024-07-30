@@ -22,8 +22,10 @@ app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
 
 CART = os.getenv('CART_HOST', 'cart')
+CART_PORT = os.getenv('CART_PORT', 8080)
 USER = os.getenv('USER_HOST', 'user')
-PAYMENT_GATEWAY = os.getenv('PAYMENT_GATEWAY', 'https://paypal.com/')
+USER_PORT = os.getenv('USER_PORT', 8080)
+PAYMENT_GATEWAY = os.getenv('PAYMENT_GATEWAY', 'https://google.com/')
 
 # Prometheus
 PromMetrics = {}
@@ -61,7 +63,7 @@ def pay(id):
 
     # check user exists
     try:
-        req = requests.get('http://{user}:8080/check/{id}'.format(user=USER, id=id))
+        req = requests.get('http://{user}:{userPort}/check/{id}'.format(user=USER, userPort=USER_PORT, id=id))
     except requests.exceptions.RequestException as err:
         app.logger.error(err)
         return str(err), 500
@@ -113,7 +115,7 @@ def pay(id):
 
     # delete cart
     try:
-        req = requests.delete('http://{cart}:8080/cart/{id}'.format(cart=CART, id=id));
+        req = requests.delete('http://{cart}:{cartPort}/cart/{id}'.format(cart=CART, cartPort=CART_PORT, id=id));
         app.logger.info('cart delete returned {}'.format(req.status_code))
     except requests.exceptions.RequestException as err:
         app.logger.error(err)
