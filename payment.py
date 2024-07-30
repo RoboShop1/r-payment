@@ -105,7 +105,7 @@ def pay(id):
     # add to order history
     if not anonymous_user:
         try:
-            req = requests.post('http://{user}:8080/order/{id}'.format(user=USER, id=id),
+            req = requests.post('http://{user}:{userPort}/order/{id}'.format(user=USER,userPort=USER_PORT, id=id),
                     data=json.dumps({'orderid': orderid, 'cart': cart}),
                     headers={'Content-Type': 'application/json'})
             app.logger.info('order history returned {}'.format(req.status_code))
